@@ -1,0 +1,126 @@
+name: Build release APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build HorusGram APK (universal and arm64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      # The proprietary submodule is private, so it is not checked out;
+      # TMessagesProj/build.gradle falls back to open stubs in that case.
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/powershell
+          df -h /
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Restore Android native build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .gradle/7.5.1
+            .gradle/buildOutputCleanup
+            TMessagesProj/.cxx
+            TMessagesProj/build/intermediates/cxx
+          key: ${{ runner.os }}-android-native-ndk21-cmake310-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'build.gradle', 'settings.gradle', 'TMessagesProj/build.gradle', 'TMessagesProj/jni/CMakeLists.txt', 'TMessagesProj/jni/**/CMakeLists.txt', 'TMessagesProj/jni/**/*.cmake') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-android-native-ndk21-cmake310-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'build.gradle', 'settings.gradle', 'TMessagesProj/build.gradle', 'TMessagesProj/jni/CMakeLists.txt', 'TMessagesProj/jni/**/CMakeLists.txt', 'TMessagesProj/jni/**/*.cmake') }}-
+
+      - name: Install Android SDK packages
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platforms;android-33" \
+            "build-tools;33.0.1" \
+            "ndk;21.4.7075529" \
+            "cmake;3.10.2.4988404" > /dev/null
+
+      - name: Use own Firebase config when provided
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          # Without the secret the placeholder in the repository is used and
+          # push notifications go through the app's own service instead.
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > TMessagesProj/google-services.json
+          fi
+
+      - name: Write API keys and signing config
+        env:
+          TELEGRAM_APP_ID: ${{ secrets.TELEGRAM_APP_ID }}
+          TELEGRAM_APP_HASH: ${{ secrets.TELEGRAM_APP_HASH }}
+          MAPS_KEY: ${{ secrets.MAPS_KEY }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            if [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+              echo "::error::Set ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, and ANDROID_KEY_PASSWORD with ANDROID_KEYSTORE_BASE64"
+              exit 1
+            fi
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > TMessagesProj/config/extera.jks
+            key_store_password="$ANDROID_KEYSTORE_PASSWORD"
+            key_password="$ANDROID_KEY_PASSWORD"
+            key_alias="$ANDROID_KEY_ALIAS"
+          else
+            # Without a private keystore secret, make an installable preview APK.
+            # Its certificate changes on every run, so it cannot update an earlier install.
+            echo "::warning::Android signing secrets are not set; this APK cannot update an earlier CI build"
+            rm -f TMessagesProj/config/extera.jks
+            key_store_password=hoursgram
+            key_password=hoursgram
+            key_alias=hoursgram
+            keytool -genkeypair -noprompt -keystore TMessagesProj/config/extera.jks \
+              -storepass "$key_store_password" -keypass "$key_password" -alias "$key_alias" \
+              -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=HoursGram CI"
+          fi
+
+          cat > API_KEYS <<EOF
+          APP_ID = ${TELEGRAM_APP_ID:-6}
+          APP_HASH = "${TELEGRAM_APP_HASH:-eb06d4abfb49dc3eeb1aeb98ae0f581e}"
+          MAPS_V2_API = ${MAPS_KEY}
+          SIGNING_KEY_STORE = config/extera.jks
+          SIGNING_KEY_PASSWORD = ${key_password}
+          SIGNING_KEY_ALIAS = ${key_alias}
+          SIGNING_KEY_STORE_PASSWORD = ${key_store_password}
+          EOF
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleAfatRelease assembleArm64Release --stacktrace "-Dorg.gradle.jvmargs=-Xmx6g -Dfile.encoding=UTF-8"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: HorusGram-Android-APK
+          path: |
+            TMessagesProj/build/outputs/apk/afat/release/*.apk
+            TMessagesProj/build/outputs/apk/arm64/release/*.apk
+          if-no-files-found: error
+          retention-days: 7

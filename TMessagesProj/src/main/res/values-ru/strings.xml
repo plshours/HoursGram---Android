@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AppName">HorusGram</string>
+    <string name="HoursGramStudioTitle">Студия HorusGram</string>
+    <string name="HoursGramStudioSubtitle">Локальное оформление профиля и коллекция</string>
+    <string name="HoursGramStudioLocalOnly">Звёзды и подарки сохраняются только на этом устройстве и не меняют ваш аккаунт Telegram.</string>
+    <string name="HoursGramStudioPreview">Предпросмотр профиля</string>
+    <string name="HoursGramStudioLocalStars">Локальные звёзды</string>
+    <string name="HoursGramStudioSetBalance">Задать баланс</string>
+    <string name="HoursGramStudioGrantStars">Добавить %1$d звёзд</string>
+    <string name="HoursGramStudioTheme">Оформление профиля</string>
+    <string name="HoursGramStudioInk">Чернила</string>
+    <string name="HoursGramStudioGraphite">Графит</string>
+    <string name="HoursGramStudioSilver">Серебро</string>
+    <string name="HoursGramStudioMarket">Магазин подарков</string>
+    <string name="HoursGramStudioMarketHint">Каталог подарков Telegram · покупки остаются локальными</string>
+    <string name="HoursGramStudioMarketLoading">Загружаем подарки Telegram…</string>
+    <string name="HoursGramStudioMarketEmpty">Сейчас доступных подарков нет</string>
+    <string name="HoursGramStudioMarketError">Не удалось загрузить подарки. Проверьте подключение и повторите попытку.</string>
+    <string name="HoursGramStudioRetry">Повторить</string>
+    <string name="HoursGramStudioShowMore">Показать ещё подарки</string>
+    <string name="HoursGramStudioGift">Подарок</string>
+    <string name="HoursGramStudioBuyGift">Добавить в профиль · %1$d ★</string>
+    <string name="HoursGramStudioOwned">Добавлено в профиль</string>
+    <string name="HoursGramStudioNeedStars">Добавьте локальные звёзды</string>
+    <string name="HoursGramStudioEmptyCollection">Подарков пока нет</string>
+    <string name="HoursGramStudioBalanceUpdated">Локальный баланс обновлён</string>
+    <string name="HoursGramStudioGiftCoffee">Чашка кофе</string>
+    <string name="HoursGramStudioGiftLollipop">Леденец</string>
+    <string name="HoursGramStudioGiftCookie">Печенье с сердцем</string>
+    <string name="HoursGramStudioGiftDuck">Счастливая уточка</string>
+    <string name="HoursGramStudioGiftBear">Плюшевый мишка</string>
+    <string name="HoursGramStudioGiftIceCream">Шоколадный батончик</string>
+    <string name="HoursGramStudioGiftLantern">Фонарь</string>
+    <string name="HoursGramStudioGiftTrophy">Золотой кубок</string>
+    <string name="HoursGramStudioLocalProfile">Предпросмотр профиля HorusGram</string>
+    <string name="HoursGramStudioLocalOnlyShort">только на устройстве</string>
+    <string name="HoursGramStudioActionStars">Звёзды</string>
+    <string name="HoursGramStudioActionGifts">Подарки</string>
+    <string name="HoursGramStudioCollection">Моя коллекция</string>
+    <string name="HoursGramStudioId">ID</string>
+    <string name="HoursGramStudioBio">О себе</string>
+    <string name="HoursGramStudioUsername">Имя пользователя</string>
+    <string name="HoursGramStudioNoBio">Описание не добавлено</string>
+    <string name="HoursGramStudioNoUsername">Имя пользователя не задано</string>
+</resources>

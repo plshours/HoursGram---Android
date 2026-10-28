@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- HoursGram: music note icon -->
+    <group
+        android:scaleX="0.66"
+        android:scaleY="0.66"
+        android:translateX="18.36"
+        android:translateY="18.36">
+        <!-- Note head -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M30,80 C30,73.4 37.6,68 47,68 C56.4,68 64,73.4 64,80 C64,86.6 56.4,92 47,92 C37.6,92 30,86.6 30,80 Z" />
+        <!-- Stem -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M60,80 L60,22 L66,22 L66,80 Z" />
+        <!-- Flag -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M66,22 C88,28 90,50 66,58 L66,50 C82,44 82,30 66,28 Z" />
+    </group>
+</vector>
