@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Firebase reads its settings by the name of the string, which the resource
+     shrinker cannot see; without this the key is removed from the release and
+     the app stops at launch. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@string/google_*,@string/gcm_*,@string/project_id,@string/firebase_*,@string/default_web_client_id" />
