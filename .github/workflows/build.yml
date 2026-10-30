@@ -42,6 +42,20 @@ jobs:
             echo "::error::${line:0:900}"
           done
 
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Start the app in an emulator
+        if: always()
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          script: sh ci/smoke.sh
+
       - uses: actions/upload-artifact@v4
         with:
           name: HorusGram-apk
