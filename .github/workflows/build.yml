@@ -42,6 +42,9 @@ jobs:
             echo "::error::${line:0:900}"
           done
 
+      - name: Build the smoke-test APK with dummy keys
+        run: gradle --no-daemon :app:assembleDebug -PTelegram.ApiId=1 -PTelegram.ApiHash=0123456789abcdef0123456789abcdef
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
