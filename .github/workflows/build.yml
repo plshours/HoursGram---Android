@@ -31,10 +31,16 @@ jobs:
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - name: Build release APK
-        run: >
-          gradle --no-daemon :app:assembleRelease
-          -PTelegram.ApiId='${{ secrets.TELEGRAM_API_ID }}'
-          -PTelegram.ApiHash='${{ secrets.TELEGRAM_API_HASH }}'
+        run: |
+          set -o pipefail
+          gradle --no-daemon :app:assembleRelease             -PTelegram.ApiId='${{ secrets.TELEGRAM_API_ID }}'             -PTelegram.ApiHash='${{ secrets.TELEGRAM_API_HASH }}' 2>&1 | tee build.log
+
+      - name: Show the compiler errors
+        if: failure()
+        run: |
+          grep -E '^e: |error:|What went wrong|Could not|Unresolved|not found|> ' build.log | head -n 40 | while IFS= read -r line; do
+            echo "::error::${line:0:900}"
+          done
 
       - uses: actions/upload-artifact@v4
         with:
