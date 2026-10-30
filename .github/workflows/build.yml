@@ -54,7 +54,7 @@ jobs:
         with:
           api-level: 34
           arch: x86_64
-          script: sh ci/smoke.sh
+          script: bash ci/smoke.sh
 
       - uses: actions/upload-artifact@v4
         with:
