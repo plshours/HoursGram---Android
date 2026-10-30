@@ -4362,6 +4362,31 @@ public class Theme {
         themes.add(themeInfo);
         themesDict.put("Dark Blue", currentNightTheme = themeInfo);
 
+        // The dark and the light look of Telegram for macOS, as on the PC client.
+        themeInfo = new ThemeInfo();
+        themeInfo.name = "HorusGram macOS";
+        themeInfo.assetName = "hoursgram-macos-dark.attheme";
+        themeInfo.previewBackgroundColor = 0xff1e2c3b;
+        themeInfo.previewInColor = 0xff1e2c3b;
+        themeInfo.previewOutColor = 0xff3c69a6;
+        themeInfo.sortIndex = 4;
+
+        sortAccents(themeInfo);
+        themes.add(themeInfo);
+        themesDict.put("HorusGram macOS", themeInfo);
+
+        themeInfo = new ThemeInfo();
+        themeInfo.name = "HorusGram macOS Light";
+        themeInfo.assetName = "hoursgram-macos.attheme";
+        themeInfo.previewBackgroundColor = 0xffffffff;
+        themeInfo.previewInColor = 0xfff7f7fa;
+        themeInfo.previewOutColor = 0xff4c90c5;
+        themeInfo.sortIndex = 6;
+
+        sortAccents(themeInfo);
+        themes.add(themeInfo);
+        themesDict.put("HorusGram macOS Light", themeInfo);
+
         themeInfo = new ThemeInfo();
         themeInfo.name = "Arctic Blue";
         themeInfo.assetName = "arctic.attheme";
